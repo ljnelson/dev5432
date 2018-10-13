@@ -145,7 +145,12 @@
 
         <plugin>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>3.0.0</version>
+          <configuration>
+            <additionalJOptions combine.children="append">
+              <additionalJOption>-J-Dhttp.agent=maven-javadoc-plugin</additionalJOption>
+            </additionalJOptions>
+          </configuration>
         </plugin>
 
         <plugin>

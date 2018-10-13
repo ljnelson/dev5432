@@ -323,5 +323,10 @@
     </plugins>
     
   </build>
+
+  <properties>
+    <links>https://microbean.github.io/microbean-kubernetes-controller-cdi/apidocs,http://javax-inject.github.io/javax-inject/api,http://docs.jboss.org/cdi/api/2.0/,https://static.javadoc.io/io.fabric8/kubernetes-model/3.0.2,https://static.javadoc.io/io.fabric8/kubernetes-client/4.0.5</links>
+    <show>private</show>
+  </properties>
   
 </project>
