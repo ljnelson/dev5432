@@ -150,12 +150,11 @@ final class AllDefaultConfigMapsController {
    *
    * @see Added
    */
-  private final void onConfigMapAddition(@Observes @Added @AllDefaultConfigMaps final ConfigMap newConfigMap) {
-    final String cn = this.getClass().getName();
-    final String mn = "onConfigMapAddition";
-    if (logger.isLoggable(Level.INFO)) {
-      logger.logp(Level.INFO, cn, mn, "New ConfigMap added: {0}", newConfigMap);
-    }
+  private final void onConfigMapAddition(@Observes
+                                         @AllDefaultConfigMaps
+                                         @Added
+                                         final ConfigMap newConfigMap) {
+    logger.log(Level.INFO, "New ConfigMap added: {0}", newConfigMap);
   }
   
   /**
