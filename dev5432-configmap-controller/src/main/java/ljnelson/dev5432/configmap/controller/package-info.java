@@ -18,7 +18,7 @@
 /**
  * Provides classes and interfaces to demonstrate how to write a
  * Kubernetes controller using <a
- * href="https://github.com/fabric8io/kubernetes-client#kubernetes--openshift-3-java-client-">the
+ * href="https://github.com/fabric8io/kubernetes-client">the
  * fabric8 Kubernetes client project</a> and <a
  * href="http://docs.jboss.org/cdi/spec/2.0/cdi-spec.html">CDI
  * 2.0</a>.

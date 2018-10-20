@@ -41,6 +41,11 @@
   </scm>
 
   <distributionManagement>
+    <site>
+      <id>dev5432</id>
+      <name>DEV5432</name>
+      <url>staged-site</url>
+    </site>
     <snapshotRepository>
       <id>sonatype-oss-repository-hosting</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -277,6 +282,7 @@
 
     <!-- maven-site-plugin properties -->
     <maven.site.deploy.skip>true</maven.site.deploy.skip>
+    <relativizeDecorationLinks>false</relativizeDecorationLinks>
 
     <!-- maven-surefire-plugin properties -->
     <surefire.useFile>false</surefire.useFile>
