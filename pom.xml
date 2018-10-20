@@ -6,19 +6,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ljnelson</groupId>
-  <artifactId>dev5432-parent</artifactId>
+  <artifactId>dev5432-configmap-controller</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
-  <name>dev5432: Parent</name>
-  <description>${project.name}</description>
+  <name>DEV5432</name>
+  <description>DEV5432: Writing Kubernetes Controllers with Java SE and CDI 2.0</description>
   <inceptionYear>2018</inceptionYear>
   <url>https://github.com/ljnelson/${project.artifactId}/</url>
 
-  <modules>
-    <module>dev5432-configmap-controller</module>
-  </modules>
-  
   <organization>
     <name>Laird Nelson</name>
     <url>https://about.me/lairdnelson</url>
@@ -73,6 +69,185 @@
   <dependencyManagement>
     <dependencies>
 
+      <!-- Import-scoped dependencies. -->
+      
+      <dependency>
+        <groupId>org.jboss.weld</groupId>
+        <artifactId>weld-core-bom</artifactId>
+        <version>3.0.5.Final</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Normal dependencies. -->
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>2.9.7</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.9.7</version>
+        <type>jar</type>
+      </dependency>
+      
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.9.7</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-yaml</artifactId>
+        <version>2.9.7</version>
+        <type>jar</type>
+      </dependency>
+      
+      <dependency>
+        <groupId>com.fasterxml.jackson.module</groupId>
+        <artifactId>jackson-module-jaxb-annotations</artifactId>
+        <version>2.9.7</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>logging-interceptor</artifactId>
+        <version>3.11.0</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>3.11.0</version>
+        <type>jar</type>
+      </dependency>
+      
+      <dependency>
+        <groupId>io.fabric8</groupId>
+        <artifactId>kubernetes-client</artifactId>
+        <version>4.0.5</version>
+        <type>jar</type>
+        <exclusions>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jul-to-slf4j</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <version>1.3</version>
+        <type>jar</type>
+      </dependency>
+      
+      <dependency>
+        <groupId>javax.el</groupId>
+        <artifactId>javax.el-api</artifactId>
+        <version>3.0.1-b04</version>
+        <type>jar</type>
+      </dependency>
+      
+      <dependency>
+        <groupId>javax.enterprise</groupId>
+        <artifactId>cdi-api</artifactId>
+        <version>2.0</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>1</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.interceptor</groupId>
+        <artifactId>javax.interceptor-api</artifactId>
+        <version>1.2</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>2.0.1.Final</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.glassfish</groupId>
+        <artifactId>javax.el</artifactId>
+        <version>3.0.1-b09</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss</groupId>
+        <artifactId>jandex</artifactId>
+        <version>2.0.5.Final</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.microbean</groupId>
+        <artifactId>microbean-configuration-cdi</artifactId>
+        <version>0.4.2</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.microbean</groupId>
+        <artifactId>microbean-configuration</artifactId>
+        <version>0.4.2</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.microbean</groupId>
+        <artifactId>microbean-kubernetes-client-cdi</artifactId>
+        <version>0.3.2</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.microbean</groupId>
+        <artifactId>microbean-kubernetes-controller</artifactId>
+        <version>0.2.2</version>
+        <type>jar</type>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.microbean</groupId>
+        <artifactId>microbean-kubernetes-controller-cdi</artifactId>
+        <version>0.2.0</version>
+        <type>jar</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.microbean</groupId>
+        <artifactId>microbean-main</artifactId>
+        <version>6</version>
+        <type>jar</type>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-jdk14</artifactId>
+        <version>1.7.25</version>
+        <type>jar</type>
+      </dependency>
+      
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -81,6 +256,107 @@
       
     </dependencies>
   </dependencyManagement>
+
+    <dependencies>
+
+    <!-- Test-scoped dependencies. -->
+    
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Runtime-scoped dependencies. -->
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jandex</artifactId>
+      <type>jar</type>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.weld.se</groupId>
+      <artifactId>weld-se-core</artifactId>
+      <type>jar</type>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.microbean</groupId>
+      <artifactId>microbean-configuration-cdi</artifactId>
+      <type>jar</type>
+      <scope>runtime</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.microbean</groupId>
+      <artifactId>microbean-configuration</artifactId>
+      <type>jar</type>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.microbean</groupId>
+      <artifactId>microbean-kubernetes-client-cdi</artifactId>
+      <type>jar</type>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.microbean</groupId>
+      <artifactId>microbean-main</artifactId>
+      <type>jar</type>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.el</artifactId>
+      <type>jar</type>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+    
+    <!-- Compile-scoped dependencies. -->
+
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>kubernetes-client</artifactId>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.microbean</groupId>
+      <artifactId>microbean-kubernetes-controller-cdi</artifactId>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <type>jar</type>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+    
+  </dependencies>
   
   <build>
     <pluginManagement>
@@ -248,7 +524,22 @@
       </plugins>
     </pluginManagement>
 
-    <plugins>
+    <plugins>      
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <executable>java</executable>
+          <arguments>
+            <argument>-ea</argument>
+            <argument>-Djava.util.logging.config.file=${basedir}/src/test/logging/logging.properties</argument>
+            <argument>-classpath</argument>
+            <classpath/>
+            <argument>org.microbean.main.Main</argument>
+          </arguments>
+        </configuration>
+      </plugin>
+      
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -267,6 +558,8 @@
     <!-- maven-javadoc-plugin properties -->
     <bottom><![CDATA[Copyright &copy; ${project.inceptionYear}&ndash;{currentYear}, <a href="${project.organization.url}" target="_parent">${project.organization.name}</a>. All rights reserved.]]></bottom>
     <detectLinks>false</detectLinks>
+    <links>https://microbean.github.io/microbean-kubernetes-controller-cdi/apidocs,http://javax-inject.github.io/javax-inject/api,http://docs.jboss.org/cdi/api/2.0/,https://static.javadoc.io/io.fabric8/kubernetes-model/3.0.2,https://static.javadoc.io/io.fabric8/kubernetes-client/4.0.5</links>
+    <show>private</show>
     <sourcetab>2</sourcetab>
 
     <!-- maven-project-info-reports-plugin properties; see https://maven.apache.org/plugins/maven-project-info-reports-plugin/ -->
