@@ -26,6 +26,7 @@ import java.lang.annotation.Target;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import java.util.logging.Level;
@@ -54,6 +55,10 @@ import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.kubernetes.client.dsl.VersionWatchable; // for javadoc only
 import io.fabric8.kubernetes.client.dsl.Watchable; // for javadoc only
+
+import io.fabric8.kubernetes.client.internal.PatchUtils;
+
+import io.fabric8.zjsonpatch.JsonDiff;
 
 import org.microbean.kubernetes.controller.cdi.annotation.Added;
 import org.microbean.kubernetes.controller.cdi.annotation.Deleted; // for javadoc only
@@ -162,13 +167,56 @@ final class AllDefaultConfigMapsController {
     logger.log(Level.INFO, "New ConfigMap added: {0}", newConfigMap);
   }
 
+  /**
+   * A <em>Kubernetes event observer method</em> that will be notified
+   * with {@link ConfigMap} "events" that describe the {@linkplain
+   * Modified modification} of a {@code ConfigMap} in a Kubernetes
+   * cluster.
+   *
+   * <p>The production of these events is governed and filtered by (in
+   * this application) the recipe manifested by the {@link
+   * #produceAllDefaultConfigMaps(KubernetesClient)} producer method.
+   * The events that result indirectly from that Kubernetes event
+   * selector method are "linked" with this Kubernetes event observer
+   * method by way of the {@link AllDefaultConfigMaps} Kubernetes
+   * event selector annotation.</p>
+   *
+   * @param modifiedConfigMap the {@link ConfigMap} that was modified;
+   * will not be {@code null}
+   *
+   * @param priorConfigMap an {@link Optional} containing any known
+   * prior state of the {@link ConfigMap} in question; will not be
+   * {@code null} but may be {@linkplain Optional#isPresent() empty}
+   *
+   * @see AllDefaultConfigMaps
+   *
+   * @see #produceAllDefaultConfigMaps(KubernetesClient)
+   *
+   * @see Modified
+   *
+   * @see Prior
+   */
   private final void onConfigMapModification(@Observes
                                              @AllDefaultConfigMaps
                                              @Modified
                                              final ConfigMap modifiedConfigMap,
                                              @Prior
                                              final Optional<ConfigMap> priorConfigMap) {
-    logger.log(Level.INFO, "ConfigMap modified.\n  Old ConfigMap:\n{0}\n  New ConfigMap:\n{1}\n", new Object[] { priorConfigMap.get(), modifiedConfigMap });
+    Objects.requireNonNull(modifiedConfigMap);
+    Objects.requireNonNull(priorConfigMap);
+    if (logger.isLoggable(Level.INFO)) {
+      final StringBuilder message = new StringBuilder("ConfigMap modified.\n  Old ConfigMap:\n{0}\n  New ConfigMap:\n{1}\n");
+      final Object[] arguments;
+      if (priorConfigMap.isPresent()) {
+        message.append("  Diff:\n{2}\n");
+        final Object diff = JsonDiff.asJson(PatchUtils.patchMapper().valueToTree(priorConfigMap.get()), PatchUtils.patchMapper().valueToTree(modifiedConfigMap));
+        assert diff != null;
+        arguments = new Object[] { priorConfigMap.get(), modifiedConfigMap, diff };
+      } else {
+        arguments = new Object[] { priorConfigMap.get(), modifiedConfigMap };
+      }
+      logger.log(Level.INFO, message.toString(), arguments);
+    }
   }
 
   /**
