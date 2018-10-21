@@ -13,7 +13,7 @@
   <name>DEV5432</name>
   <description>DEV5432: Writing Kubernetes Controllers with Java SE and CDI 2.0</description>
   <inceptionYear>2018</inceptionYear>
-  <url>https://github.com/ljnelson/${project.artifactId}/</url>
+  <url>https://github.com/ljnelson/dev5432</url>
 
   <organization>
     <name>Laird Nelson</name>
