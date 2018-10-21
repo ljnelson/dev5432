@@ -30,9 +30,9 @@
   </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:ljnelson/${project.artifactId}.git</connection>
-    <developerConnection>scm:git:git@github.com:ljnelson/${project.artifactId}.git</developerConnection>
-    <url>https://github.com/ljnelson/${project.artifactId}/</url>
+    <connection>scm:git:git@github.com:ljnelson/dev5432.git</connection>
+    <developerConnection>scm:git:git@github.com:ljnelson/dev5432.git</developerConnection>
+    <url>https://github.com/ljnelson/dev5432/</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -63,7 +63,7 @@
 
   <issueManagement>
     <system>Github</system>
-    <url>https://github.com/ljnelson/${project.artifactId}/issues</url>
+    <url>https://github.com/ljnelson/dev5432/issues</url>
   </issueManagement>
 
   <dependencyManagement>
