@@ -24,6 +24,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,10 +55,11 @@ import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.kubernetes.client.dsl.VersionWatchable; // for javadoc only
 import io.fabric8.kubernetes.client.dsl.Watchable; // for javadoc only
 
-import org.microbean.kubernetes.controller.cdi.annotation.Added; // for javadoc only
+import org.microbean.kubernetes.controller.cdi.annotation.Added;
 import org.microbean.kubernetes.controller.cdi.annotation.Deleted; // for javadoc only
 import org.microbean.kubernetes.controller.cdi.annotation.KubernetesEventSelector;
-import org.microbean.kubernetes.controller.cdi.annotation.Modified; // for javadoc only
+import org.microbean.kubernetes.controller.cdi.annotation.Modified;
+import org.microbean.kubernetes.controller.cdi.annotation.Prior;
 
 /**
  * A <em>controller</em> that {@linkplain
@@ -81,7 +86,7 @@ final class AllDefaultConfigMapsController {
    * ljnelson.dev5432.configmap.controller.AllDefaultConfigMapsController}.</p>
    */
   private static final Logger logger = Logger.getLogger(AllDefaultConfigMapsController.class.getName());
-  
+
   /**
    * Creates a new {@link AllDefaultConfigMapsController}.
    */
@@ -155,6 +160,45 @@ final class AllDefaultConfigMapsController {
                                          @Added
                                          final ConfigMap newConfigMap) {
     logger.log(Level.INFO, "New ConfigMap added: {0}", newConfigMap);
+  }
+
+  private final void onConfigMapModification(@Observes
+                                             @AllDefaultConfigMaps
+                                             @Modified
+                                             final ConfigMap modifiedConfigMap,
+                                             @Prior
+                                             final Optional<ConfigMap> priorConfigMap) {
+    logger.log(Level.INFO, "ConfigMap modified.\n  Old ConfigMap:\n{0}\n  New ConfigMap:\n{1}\n", new Object[] { priorConfigMap.get(), modifiedConfigMap });
+  }
+
+  /**
+   * A <a
+   * href="http://docs.jboss.org/cdi/spec/2.0/cdi-spec.html#producer_method"
+   * target="_parent">producer method</a> that returns an {@linkplain
+   * ApplicationScoped application-scoped} {@link Map} of {@link
+   * ConfigMap}s indexed by the keys that Kubernetes assigns to them.
+   *
+   * <p>This method never returns {@code null}.</p>
+   *
+   * <h2>Thread Safety</h2>
+   *
+   * <p>This method is safe for concurrent use by multiple
+   * threads.</p>
+   *
+   * <p><strong>The return value that results from invoking this
+   * method is <em>not</em> safe for concurrent use by multiple
+   * threads.</strong> Threads must {@code synchronize} on it
+   * appropriately for all retrieval, traversal and mutation
+   * operations.</p>
+   *
+   * @return a non-{@code null} {@link Map} that will be used to house
+   * prior states of Kubernetes resources
+   */
+  @Produces
+  @ApplicationScoped
+  @AllDefaultConfigMaps
+  private static final Map<Object, ConfigMap> produceKubernetesResourceCache() {
+    return new HashMap<>();
   }
   
   /**

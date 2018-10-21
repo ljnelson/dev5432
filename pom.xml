@@ -230,7 +230,7 @@
       <dependency>
         <groupId>org.microbean</groupId>
         <artifactId>microbean-kubernetes-controller-cdi</artifactId>
-        <version>0.2.0</version>
+        <version>0.2.1</version>
         <type>jar</type>
       </dependency>
 
@@ -524,7 +524,17 @@
       </plugins>
     </pluginManagement>
 
-    <plugins>      
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <enableClusterTests>${enableClusterTests}</enableClusterTests>
+            <java.util.logging.config.file>${basedir}/src/test/logging/logging.properties</java.util.logging.config.file>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -587,6 +597,8 @@
     <!-- Other properties -->
     <project.build.sourceEncoding>UTF8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF8</project.reporting.outputEncoding>
+
+    <enableClusterTests>false</enableClusterTests>
     
   </properties>
 
