@@ -26,4 +26,4 @@
  * @author <a href="https://about.me/lairdnelson"
  * target="_parent">Laird Nelson</a>
  */
-package ljnelson.dev5432.configmap.controller;
+package io.github.ljnelson.dev5432.configmap.controller;

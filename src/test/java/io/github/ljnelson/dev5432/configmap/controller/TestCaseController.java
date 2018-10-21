@@ -14,7 +14,7 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package ljnelson.dev5432.configmap.controller;
+package io.github.ljnelson.dev5432.configmap.controller;
 
 import javax.enterprise.inject.se.SeContainer;
 import javax.enterprise.inject.se.SeContainerInitializer;
