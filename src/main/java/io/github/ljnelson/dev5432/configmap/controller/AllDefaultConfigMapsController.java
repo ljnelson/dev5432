@@ -61,20 +61,28 @@ import io.fabric8.kubernetes.client.internal.PatchUtils;
 import io.fabric8.zjsonpatch.JsonDiff;
 
 import org.microbean.kubernetes.controller.cdi.annotation.Added;
-import org.microbean.kubernetes.controller.cdi.annotation.Deleted; // for javadoc only
+import org.microbean.kubernetes.controller.cdi.annotation.Deleted;
 import org.microbean.kubernetes.controller.cdi.annotation.KubernetesEventSelector;
 import org.microbean.kubernetes.controller.cdi.annotation.Modified;
 import org.microbean.kubernetes.controller.cdi.annotation.Prior;
 
 /**
  * A <em>controller</em> that {@linkplain
- * #onConfigMapAddition(ConfigMap) watches for the addition of
- * <code>ConfigMap</code>}s.
+ * #onConfigMapAddition(ConfigMap, KubernetesClient) watches for the
+ * addition}, {@linkplain #onConfigMapModification(ConfigMap,
+ * Optional, KubernetesClient) modification} and {@linkplain
+ * #onConfigMapDeletion(ConfigMap, KubernetesClient) deletion} of
+ * {@link ConfigMap}s.
  *
  * @author <a href="https://about.me/lairdnelson"
  * target="_parent">Laird Nelson</a>
  *
- * @see #onConfigMapAddition(ConfigMap)
+ * @see #onConfigMapAddition(ConfigMap, KubernetesClient)
+ *
+ * @see #onConfigMapModification(ConfigMap, Optional,
+ * KubernetesClient)
+ *
+ * @see #onConfigMapDeletion(ConfigMap, KubernetesClient)
  *
  * @see #produceAllDefaultConfigMaps(KubernetesClient)
  */
@@ -107,8 +115,8 @@ final class AllDefaultConfigMapsController {
    * whose {@link Listable#list() list()} and {@link
    * Watchable#watch(Object) watch(Watcher)} methods will eventually
    * produce events that will be processed by the {@link
-   * #onConfigMapAddition(ConfigMap)} Kubernetes event observer
-   * method.
+   * #onConfigMapAddition(ConfigMap, KubernetesClient)} Kubernetes
+   * event observer method.
    *
    * <p>This method never returns {@code null}.</p>
    *
@@ -128,7 +136,12 @@ final class AllDefaultConfigMapsController {
    *
    * @see Namespaceable#inNamespace(String)
    *
-   * @see #onConfigMapAddition(ConfigMap)
+   * @see #onConfigMapAddition(ConfigMap, KubernetesClient)
+   *
+   * @see #onConfigMapModification(ConfigMap, Optional,
+   * KubernetesClient)
+   *
+   * @see #onConfigMapDeletion(ConfigMap, KubernetesClient)
    */
   @Produces
   @ApplicationScoped
@@ -154,6 +167,13 @@ final class AllDefaultConfigMapsController {
    * @param newConfigMap the {@link ConfigMap} that was added; will
    * not be {@code null}
    *
+   * @param client a {@link KubernetesClient} that will be supplied
+   * here by the CDI ecosystem; will not be (and must not be) {@code
+   * null}
+   *
+   * @exception NullPointerException if for some reason either {@code
+   * newConfigMap} or {@code client} is {@code null}
+   *
    * @see AllDefaultConfigMaps
    *
    * @see #produceAllDefaultConfigMaps(KubernetesClient)
@@ -163,8 +183,11 @@ final class AllDefaultConfigMapsController {
   private final void onConfigMapAddition(@Observes
                                          @AllDefaultConfigMaps
                                          @Added
-                                         final ConfigMap newConfigMap) {
-    logger.log(Level.INFO, "New ConfigMap added: {0}", newConfigMap);
+                                         final ConfigMap newConfigMap,
+                                         final KubernetesClient client) {
+    Objects.requireNonNull(newConfigMap);
+    Objects.requireNonNull(client);
+    logger.log(Level.INFO, "ConfigMap added.\n{0}", newConfigMap);
   }
 
   /**
@@ -188,6 +211,14 @@ final class AllDefaultConfigMapsController {
    * prior state of the {@link ConfigMap} in question; will not be
    * {@code null} but may be {@linkplain Optional#isPresent() empty}
    *
+   * @param client a {@link KubernetesClient} that will be supplied
+   * here by the CDI ecosystem; will not be (and must not be) {@code
+   * null}
+   *
+   * @exception NullPointerException if {@code modifiedConfigMap} or
+   * {@code priorConfigMap} or {@code client} is {@code null} for any
+   * reason; in normal usage they will not be
+   *
    * @see AllDefaultConfigMaps
    *
    * @see #produceAllDefaultConfigMaps(KubernetesClient)
@@ -201,9 +232,11 @@ final class AllDefaultConfigMapsController {
                                              @Modified
                                              final ConfigMap modifiedConfigMap,
                                              @Prior
-                                             final Optional<ConfigMap> priorConfigMap) {
+                                             final Optional<ConfigMap> priorConfigMap,
+                                             final KubernetesClient client) {
     Objects.requireNonNull(modifiedConfigMap);
     Objects.requireNonNull(priorConfigMap);
+    Objects.requireNonNull(client);
     if (logger.isLoggable(Level.INFO)) {
       final StringBuilder message = new StringBuilder("ConfigMap modified.\n  Old ConfigMap:\n{0}\n  New ConfigMap:\n{1}\n");
       final Object[] arguments;
@@ -213,9 +246,54 @@ final class AllDefaultConfigMapsController {
         assert diff != null;
         arguments = new Object[] { priorConfigMap.get(), modifiedConfigMap, diff };
       } else {
-        arguments = new Object[] { priorConfigMap.get(), modifiedConfigMap };
+        arguments = new Object[] { "(unknown)", modifiedConfigMap };
       }
       logger.log(Level.INFO, message.toString(), arguments);
+    }
+  }
+
+  /**
+   * A <em>Kubernetes event observer method</em> that will be notified
+   * with {@link ConfigMap} "events" that describe the {@linkplain
+   * Deleted deletion} of a {@code ConfigMap} from a Kubernetes
+   * cluster.
+   *
+   * <p>The production of these events is governed and filtered by (in
+   * this application) the recipe manifested by the {@link
+   * #produceAllDefaultConfigMaps(KubernetesClient)} producer method.
+   * The events that result indirectly from that Kubernetes event
+   * selector method are "linked" with this Kubernetes event observer
+   * method by way of the {@link AllDefaultConfigMaps} Kubernetes
+   * event selector annotation.</p>
+   *
+   * @param deletedConfigMap the {@link ConfigMap} that was deleted;
+   * will not be {@code null}
+   *
+   * @param client a {@link KubernetesClient} that will be supplied
+   * here by the CDI ecosystem; will not be (and must not be) {@code
+   * null}
+   *
+   * @exception NullPointerException if {@code deletedConfigMap} or or
+   * {@code client} is {@code null} for any reason; in normal usage
+   * they will not be
+   *
+   * @see AllDefaultConfigMaps
+   *
+   * @see #produceAllDefaultConfigMaps(KubernetesClient)
+   *
+   * @see Deleted
+   *
+   * @see Prior
+   */  
+  private final void onConfigMapDeletion(@Observes
+                                         @AllDefaultConfigMaps
+                                         @Deleted
+                                         final ConfigMap deletedConfigMap,
+                                         final KubernetesClient client) {
+    Objects.requireNonNull(deletedConfigMap);
+    Objects.requireNonNull(client);
+    if (logger.isLoggable(Level.INFO)) {
+      logger.log(Level.INFO, "ConfigMap deleted.\n{0}", deletedConfigMap);
     }
   }
 
